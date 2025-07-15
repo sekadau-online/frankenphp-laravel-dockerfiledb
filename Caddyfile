@@ -1,0 +1,36 @@
+# Mengkonfigurasi Caddy untuk melayani domain lokal atau IP
+# Ganti 'localhost' dengan domain Anda jika Anda memiliki satu (misalnya, 'yourdomain.com')
+# Caddy akan secara otomatis menangani HTTPS untuk domain yang valid
+:80 {
+    # Mengatur root dokumen ke direktori publik Laravel
+    root * /app/public
+
+    # Mengaktifkan kompresi Gzip untuk respons
+    encode gzip
+
+    # Mengaktifkan log akses
+    log {
+        output stdout
+        format json
+    }
+
+    # Menangani file statis secara langsung
+    file_server
+
+    # Meneruskan semua permintaan yang tidak cocok dengan file statis ke server Octane (FrankenPHP)
+    # 'f_laravel:8002' adalah nama layanan Docker Compose dan port yang didengarkan oleh FrankenPHP
+    reverse_proxy f_laravel:8002 {
+        # Mengatur header Host untuk diteruskan dengan benar
+        header_up Host {host}
+        # Mengatur header X-Forwarded-For untuk alamat IP klien
+        header_up X-Forwarded-For {remote_ip}
+        # Mengatur header X-Forwarded-Proto untuk protokol (HTTP/HTTPS)
+        header_up X-Forwarded-Proto {scheme}
+    }
+
+    # Jika ada error, tampilkan halaman error Laravel
+    handle_errors {
+        rewrite * /index.php
+        reverse_proxy f_laravel:8002
+    }
+}
