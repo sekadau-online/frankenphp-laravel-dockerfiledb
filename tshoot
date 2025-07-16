@@ -7,3 +7,9 @@ docker system prune --all --volumes --force
 docker-compose down -v      # Ini akan menghapus semua kontainer dan volume yang lama
 docker-compose build --no-cache # Ini akan membangun ulang image dari awal tanpa cache
 docker-compose up -d        # Ini akan menjalankan semua service Anda
+docker stop $(docker ps -aq)  # Hentikan semua kontainer yang sedang berjalan
+docker rm $(docker ps -aq)    # Hapus semua kontainer yang dihentikan
+docker rmi $(docker images -aq -f "dangling=true") # Hapus image 'dangling'
+docker rmi $(docker images -aq) # Hapus semua image
+docker volume rm $(docker volume ls -q) # Hapus semua volume
+docker network rm $(docker network ls -q) # Hapus semua network (kecuali default)
