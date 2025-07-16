@@ -3,3 +3,7 @@ composer update
 docker-compose exec f_laravel bash
 php artisan migrate
 #mysql -h db -P 3306 -u root -p
+docker system prune --all --volumes --force
+docker-compose down -v      # Ini akan menghapus semua kontainer dan volume yang lama
+docker-compose build --no-cache # Ini akan membangun ulang image dari awal tanpa cache
+docker-compose up -d        # Ini akan menjalankan semua service Anda
